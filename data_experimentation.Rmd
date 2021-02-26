@@ -19,10 +19,18 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readr)
 library(tidyverse)
 library(patchwork)
+library(lubridate)
+library(gganimate)
+library(transformr)
+library(gifski)
 ```
 
 ```{r loading data}
 Adopted_Capital_Improvement_Budgets <- read_csv("Adopted_Capital_Improvement_Budgets.csv")
+
+Adopted_Capital_Improvement_Budgets %>% 
+  mutate(across(where(is.character), as.factor)) %>% 
+  summary()
 ```
 
 ```{r Projects by Service Type}
@@ -42,9 +50,63 @@ g2 <- Adopted_Capital_Improvement_Budgets %>%
   labs(title = "Costs of Projects by Service Type ($)",
        x = "",
        y = "") +
-  scale_x_continuous(labels = scales::comma) +
-  theme(axis.text.x = element_text(angle = 30))
+  scale_x_continuous(labels = scales::comma)
 
-g2 / g1
+service_g <- g2 / g1
+service_g
+```
+
+```{r projects by department}
+g3 <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(DEPARTMENT, name = "counts") %>% 
+  mutate(d_reorder = fct_reorder(DEPARTMENT, counts, .fun = max)) %>% 
+  ggplot(aes(y = d_reorder)) +
+  geom_bar() +
+  labs(title = "Amount of Projects by Department Type",
+       x = "",
+       y = "") 
+
+g4 <- Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>% 
+  ggplot(aes(x = Amount, y = department_reorder)) +
+  geom_col() +
+  labs(title = "Costs of Projects by Department ($)",
+       x = "",
+       y = "") +
+  scale_x_continuous(labels = scales::comma)
+
+ department_g <- g3 / g4
+ department_g
+```
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_amount = sum(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_amount)) +
+  geom_col(fill = "darkgreen") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = "Yearly Total Adopted Capital Improvement Budgets",
+       subtitle = "2004 - 2021")
+
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == "2014") %>% 
+  group_by(DEPARTMENT) %>% 
+  summarise(dept_sum = sum(Amount)) %>% 
+  mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
+  ggplot(aes(y = Dept, x = dept_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma)
+
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == "2014",
+         DEPARTMENT == "Public Works",
+         Amount > 1000000) %>% 
+  mutate(Title = fct_reorder(TITLE, Amount, sum)) %>% 
+  select(-TITLE) %>% 
+  ggplot(aes(x = Amount, y = Title)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma)
+
 ```
 

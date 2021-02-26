@@ -38,6 +38,24 @@ library(tidyverse)
 
 ```r
 library(patchwork)
+library(lubridate)
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     date, intersect, setdiff, union
+```
+
+```r
+library(gganimate)
+library(transformr)
+library(gifski)
 ```
 
 
@@ -64,6 +82,63 @@ Adopted_Capital_Improvement_Budgets <- read_csv("Adopted_Capital_Improvement_Bud
 ## )
 ```
 
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  mutate(across(where(is.character), as.factor)) %>% 
+  summary()
+```
+
+```
+##       YEAR                                      SERVICE   
+##  Min.   :2004   Community Facilities                :790  
+##  1st Qu.:2008   Internal Service                    :103  
+##  Median :2012   Residential and Economic Development:283  
+##  Mean   :2012   Streets and Utilities               :755  
+##  3rd Qu.:2016                                             
+##  Max.   :2021                                             
+##                                                           
+##                                                  TITLE               ID #     
+##  Sidewalk Reconstruction Program                    :  45   SU-660821-1:  35  
+##  Children's Play Area Improvements                  :  30   CF-660834  :  30  
+##  Parks Grant Prep/Preliminary Design Program        :  30   CF-661054  :  30  
+##  Bond Sale Costs                                    :  26   SU-662231  :  28  
+##  Outdoor Court Restoration Program                  :  25   CF-660833  :  25  
+##  Signalized Intersection Safety Improvements Program:  23   CF-660692-1:  24  
+##  (Other)                                            :1752   (Other)    :1759  
+##                              DEPARTMENT                   LOCATION   
+##  Public Works                     :779   Citywide             : 613  
+##  Parks and Recreation             :569   Internal Accounting  :  68  
+##  Planning and Economic Development:271   1225 Estabrook Drive :  33  
+##  General Government               : 94   Downtown area        :  16  
+##  Police                           : 48   1325 Aida Place      :  15  
+##  Fire                             : 45   891 North Dale Street:  14  
+##  (Other)                          :125   (Other)              :1172  
+##      DISTRICT  
+##  Citywide:743  
+##  0       :280  
+##  5       : 83  
+##  6       : 67  
+##  17      : 57  
+##  3       : 45  
+##  (Other) :656  
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Description  
+##  A specified fund for Capital Maintenance work on City-owned facilities. This program funds the preservation of the City's physical assets.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    : 459  
+##  This is a citywide program established to improve the structural condition, safety and rideability of the city's street system.  This recurring program, which replaces the Residential Street Vitality Program, will include all city streets, both residential and arterial, and projects will be prioritized by Pavement Condition Index and Average Daily Traffic as the main criteria.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   :  58  
+##  Based on the work of Gil Penalosa, an internationally renowned urban designer, this fund will allow the building of bold and vibrant places across the City of Saint Paul.  The 8-80 Vitality Fund will build on the momentum of recent investments such as Rebuild Saint Paul and the Green Line.  An 8-80 city works for people aged 8 and aged 80, by providing streets and public spaces that create vital and welcoming neighborhoods.\n\nInvestments include:\n$8M - Palace Theatre renovations to match State bonding\n$8M - Jackson Street reconstruction and phase 1 of downtown bike loop\n$13.2M - Grand Rounds, including street reconstruction and bike lanes\n$2M - Dickerman Park, developing green spaces on the Green Line\n$1.8M - Optical fiber infrastructure to provide high speed citywide network connectivity\n$9.5M - Street Reconstruction, including 8-80 streets and public spaces:  37  
+##  Reconstruct hazardous and deteriorating sidewalks throughout the City.  The work locations are prioritized so as to correct most severe areas first.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          :  35  
+##  Continuation of an annual program which facilitates the systematic replacement, renovation, and/or retrofitting of the City's existing children's play areas based on the Parks Asset Management System, the Parks and Recreation Vision and System Plan and other factors.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   :  30  
+##  To set aside a portion of the Capital Improvement Bond proceeds to cover the cost of issuing the bonds.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       :  28  
+##  (Other)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       :1284  
+##          FIN_CODE       Amount            LATITUDE       LONGITUDE     
+##  CIB         :881   Min.   :    3300   Min.   : 0.00   Min.   :-93.20  
+##  CDBG        :293   1st Qu.:   50000   1st Qu.: 0.00   1st Qu.:  0.00  
+##  MSA         :217   Median :  165000   Median : 0.00   Median :  0.00  
+##  Assessment  : 85   Mean   :  619176   Mean   : 8.59   Mean   :-17.79  
+##  Street Bonds: 52   3rd Qu.:  467500   3rd Qu.: 0.00   3rd Qu.:  0.00  
+##  PIA         : 38   Max.   :25000000   Max.   :45.00   Max.   :  0.00  
+##  (Other)     :365                      NA's   :73      NA's   :73
+```
+
 
 ```r
 g1 <- Adopted_Capital_Improvement_Budgets %>% 
@@ -82,11 +157,86 @@ g2 <- Adopted_Capital_Improvement_Budgets %>%
   labs(title = "Costs of Projects by Service Type ($)",
        x = "",
        y = "") +
-  scale_x_continuous(labels = scales::comma) +
-  theme(axis.text.x = element_text(angle = 30))
+  scale_x_continuous(labels = scales::comma)
 
-g2 / g1
+service_g <- g2 / g1
+service_g
 ```
 
 ![](data_experimentation_files/figure-html/Projects by Service Type-1.png)<!-- -->
+
+
+```r
+g3 <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(DEPARTMENT, name = "counts") %>% 
+  mutate(d_reorder = fct_reorder(DEPARTMENT, counts, .fun = max)) %>% 
+  ggplot(aes(y = d_reorder)) +
+  geom_bar() +
+  labs(title = "Amount of Projects by Department Type",
+       x = "",
+       y = "") 
+
+g4 <- Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>% 
+  ggplot(aes(x = Amount, y = department_reorder)) +
+  geom_col() +
+  labs(title = "Costs of Projects by Department ($)",
+       x = "",
+       y = "") +
+  scale_x_continuous(labels = scales::comma)
+
+ department_g <- g3 / g4
+ department_g
+```
+
+![](data_experimentation_files/figure-html/projects by department-1.png)<!-- -->
+
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_amount = sum(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_amount)) +
+  geom_col(fill = "darkgreen") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = "Yearly Total Adopted Capital Improvement Budgets",
+       subtitle = "2004 - 2021")
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == "2014") %>% 
+  group_by(DEPARTMENT) %>% 
+  summarise(dept_sum = sum(Amount)) %>% 
+  mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
+  ggplot(aes(y = Dept, x = dept_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma)
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-2-2.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == "2014",
+         DEPARTMENT == "Public Works",
+         Amount > 1000000) %>% 
+  mutate(Title = fct_reorder(TITLE, Amount, sum)) %>% 
+  select(-TITLE) %>% 
+  ggplot(aes(x = Amount, y = Title)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma)
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-2-3.png)<!-- -->
 
