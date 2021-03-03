@@ -81,13 +81,60 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
 
 ```{r}
 Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "Stack", stat = "identity") +
+  scale_x_continuous(labels = scales::comma) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "2004 - 2021",
+       x = "$",
+       y = "",
+       fill = "")
+  
+
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(DEPARTMENT != "Public Works") %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "Stack", stat = "identity") +
+  scale_x_continuous(labels = scales::comma) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "2004 - 2021",
+       x = "$",
+       y = "",
+       fill = "")
+```
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_x_continuous(labels = scales::percent) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "Percent of Total Project Costs by Each Service Type",
+       x = "",
+       y = "",
+       fill = "")
+```
+
+
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
   geom_col(fill = "darkgreen") +
   scale_y_continuous(labels = scales::comma) +
   labs(title = "Yearly Total Adopted Capital Improvement Budgets",
-       subtitle = "2004 - 2021")
+       subtitle = "2004 - 2021") +
+  theme(plot.title.position = "plot")
 
 Adopted_Capital_Improvement_Budgets %>% 
   filter(YEAR == "2014") %>% 
@@ -96,7 +143,20 @@ Adopted_Capital_Improvement_Budgets %>%
   mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
   ggplot(aes(y = Dept, x = dept_sum)) +
   geom_col() +
-  scale_x_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Department Project Sums") +
+  theme(plot.title.position = "plot")
+
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2014) %>% 
+  group_by(SERVICE) %>% 
+  summarise(s_sum = sum(Amount)) %>% 
+  mutate(S = fct_reorder(SERVICE, s_sum, sum)) %>% 
+  ggplot(aes(y = S, x = s_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Service Project Sums") +
+  theme(plot.title.position = "plot")
 
 Adopted_Capital_Improvement_Budgets %>% 
   filter(YEAR == "2014",
@@ -106,7 +166,35 @@ Adopted_Capital_Improvement_Budgets %>%
   select(-TITLE) %>% 
   ggplot(aes(x = Amount, y = Title)) +
   geom_col() +
-  scale_x_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Public Works Projects Sums") +
+  theme(plot.title.position = "plot")
 
+```
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2012) %>% 
+  group_by(DEPARTMENT) %>% 
+  summarise(dept_sum = sum(Amount)) %>% 
+  mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
+  ggplot(aes(y = Dept, x = dept_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2012 Department Project Sums") +
+  theme(plot.title.position = "plot")
+
+
+
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2012) %>% 
+  group_by(SERVICE) %>% 
+  summarise(s_sum = sum(Amount)) %>% 
+  mutate(S = fct_reorder(SERVICE, s_sum, sum)) %>% 
+  ggplot(aes(y = S, x = s_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2012 Service Project Sums") +
+  theme(plot.title.position = "plot")
 ```
 

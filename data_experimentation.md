@@ -24,10 +24,18 @@ library(tidyverse)
 ```
 
 ```
-## v ggplot2 3.3.2     v dplyr   1.0.2
-## v tibble  3.0.4     v stringr 1.4.0
+## v ggplot2 3.3.3     v dplyr   1.0.4
+## v tibble  3.1.0     v stringr 1.4.0
 ## v tidyr   1.1.2     v forcats 0.5.0
 ## v purrr   0.3.4
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 4.0.4
+```
+
+```
+## Warning: package 'dplyr' was built under R version 4.0.4
 ```
 
 ```
@@ -194,20 +202,72 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
 
 ```r
 Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "Stack", stat = "identity") +
+  scale_x_continuous(labels = scales::comma) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "2004 - 2021",
+       x = "$",
+       y = "",
+       fill = "")
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(DEPARTMENT != "Public Works") %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "Stack", stat = "identity") +
+  scale_x_continuous(labels = scales::comma) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "2004 - 2021",
+       x = "$",
+       y = "",
+       fill = "")
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-2-2.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_x_continuous(labels = scales::percent) +
+  theme(legend.position = "bottom",
+        plot.title.position = "plot") +
+  labs(title = "Department Project Amounts by Service Type",
+       subtitle = "Percent of Total Project Costs by Each Service Type",
+       x = "",
+       y = "",
+       fill = "")
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+
+
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
   geom_col(fill = "darkgreen") +
   scale_y_continuous(labels = scales::comma) +
   labs(title = "Yearly Total Adopted Capital Improvement Budgets",
-       subtitle = "2004 - 2021")
+       subtitle = "2004 - 2021") +
+  theme(plot.title.position = "plot")
 ```
 
-```
-## `summarise()` ungrouping output (override with `.groups` argument)
-```
-
-![](data_experimentation_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+![](data_experimentation_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
 Adopted_Capital_Improvement_Budgets %>% 
@@ -217,14 +277,27 @@ Adopted_Capital_Improvement_Budgets %>%
   mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
   ggplot(aes(y = Dept, x = dept_sum)) +
   geom_col() +
-  scale_x_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Department Project Sums") +
+  theme(plot.title.position = "plot")
 ```
 
-```
-## `summarise()` ungrouping output (override with `.groups` argument)
+![](data_experimentation_files/figure-html/unnamed-chunk-4-2.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2014) %>% 
+  group_by(SERVICE) %>% 
+  summarise(s_sum = sum(Amount)) %>% 
+  mutate(S = fct_reorder(SERVICE, s_sum, sum)) %>% 
+  ggplot(aes(y = S, x = s_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Service Project Sums") +
+  theme(plot.title.position = "plot")
 ```
 
-![](data_experimentation_files/figure-html/unnamed-chunk-2-2.png)<!-- -->
+![](data_experimentation_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
 
 ```r
 Adopted_Capital_Improvement_Budgets %>% 
@@ -235,8 +308,41 @@ Adopted_Capital_Improvement_Budgets %>%
   select(-TITLE) %>% 
   ggplot(aes(x = Amount, y = Title)) +
   geom_col() +
-  scale_x_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2014 Public Works Projects Sums") +
+  theme(plot.title.position = "plot")
 ```
 
-![](data_experimentation_files/figure-html/unnamed-chunk-2-3.png)<!-- -->
+![](data_experimentation_files/figure-html/unnamed-chunk-4-4.png)<!-- -->
+
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2012) %>% 
+  group_by(DEPARTMENT) %>% 
+  summarise(dept_sum = sum(Amount)) %>% 
+  mutate(Dept = fct_reorder(DEPARTMENT, dept_sum, sum)) %>% 
+  ggplot(aes(y = Dept, x = dept_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2012 Department Project Sums") +
+  theme(plot.title.position = "plot")
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(YEAR == 2012) %>% 
+  group_by(SERVICE) %>% 
+  summarise(s_sum = sum(Amount)) %>% 
+  mutate(S = fct_reorder(SERVICE, s_sum, sum)) %>% 
+  ggplot(aes(y = S, x = s_sum)) +
+  geom_col() +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title = "2012 Service Project Sums") +
+  theme(plot.title.position = "plot")
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-5-2.png)<!-- -->
 
