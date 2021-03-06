@@ -4,6 +4,7 @@ author: "Josh Fortin"
 date: "2/26/2021"
 output: 
   html_document:
+    theme: united
     keep_md: TRUE
     toc: TRUE
     df_print: paged
@@ -39,7 +40,7 @@ Adopted_Capital_Improvement_Budgets %>%
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
-  geom_col(fill = "#FDB462") +
+  geom_col(fill = "#F46D43") +
   scale_y_continuous(labels = scales::dollar) +
   labs(title = "Yearly Total Adopted Capital Improvement Budgets",
        subtitle = "2004 - 2021",
@@ -62,7 +63,7 @@ g1 <- Adopted_Capital_Improvement_Budgets %>%
   add_count(SERVICE, name = "counts") %>% 
   mutate(s_reorder = fct_reorder(SERVICE, counts, .fun = max)) %>% 
   ggplot(aes(y = s_reorder)) +
-  geom_bar(fill = "#FDB462") +
+  geom_bar(fill = "#F46D43") +
   labs(title = "Amount of Projects by Service Type",
        x = "",
        y = "") +
@@ -80,7 +81,7 @@ g2 <- Adopted_Capital_Improvement_Budgets %>%
   mutate(Service_reorder = fct_reorder(SERVICE, Amount, sum)) %>% 
   ggplot(aes(x = Amount, y = Service_reorder)) +
   geom_col(fill = "#FDB462") +
-  labs(title = "Costs of Projects by Service Type ($)",
+  labs(title = "Costs of Projects by Service Type",
        x = "",
        y = "") +
   scale_x_continuous(labels = scales::dollar) +
@@ -104,7 +105,7 @@ g3 <- Adopted_Capital_Improvement_Budgets %>%
   mutate(d_reorder = fct_reorder(DEPARTMENT, counts, .fun = max)) %>% 
   ggplot(aes(y = d_reorder)) +
   geom_bar(fill = "#FDB462") +
-  labs(title = "Amount of Projects by Department Type",
+  labs(title = "Amount of Projects by Department",
        x = "",
        y = "") +
   theme(plot.title.position = "plot",
@@ -121,7 +122,7 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
   mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>% 
   ggplot(aes(x = Amount, y = department_reorder)) +
   geom_col(fill = "#FDB462") +
-  labs(title = "Costs of Projects by Department ($)",
+  labs(title = "Costs of Projects by Department",
        x = "",
        y = "") +
   scale_x_continuous(labels = scales::dollar) +
@@ -149,8 +150,8 @@ Adopted_Capital_Improvement_Budgets %>%
   ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_x_continuous(labels = scales::percent) +
-  theme(legend.position = "right",
-        legend.direction = "vertical",
+  theme(legend.position = "bottom",
+        legend.direction = "horizontal",
         legend.text = element_text(size = 7),
         plot.title.position = "plot",
         plot.background = element_rect("linen"), 
@@ -162,12 +163,42 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
   scale_fill_brewer(palette = "Set3") +
-  labs(title = "Percent of Total Project Costs by Each Service Type",
-       subtitle = "",
+  labs(title = "Proportion of Service Type of Project Amounts by Department",
+       subtitle = "Across all Years of Data",
        x = "",
        y = "",
-       fill = "") 
+       fill = "")
 ```
+> 1 = Community Facilities, 2 = Internal Service, 3 = Residential and Economic Development, 4 = Streets and Utilities
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  add_count(SERVICE, name = "counts") %>%
+  mutate(department_reorder = fct_reorder(DEPARTMENT, counts, sum)) %>%
+  ggplot(aes(y = department_reorder, x = counts, fill = SERVICE)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_x_continuous(labels = scales::percent) +
+  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#F46D43", "darksalmon","#D53E4F", "#FEE08B")) +
+  theme(legend.position = "bottom",
+        legend.direction = "horizontal",
+        plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        legend.text = element_text(size = 8),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()) +
+  labs(title = "Proportion of Service Type of Projects by Department",
+       subtitle = "Across all Years of Data",
+       x = "",
+       y = "",
+       fill = "")
+```
+
+
 ```{r}
 Adopted_Capital_Improvement_Budgets %>% 
   filter(DEPARTMENT == c("Parks and Recreation", "Police", "Fire", "Library", "Fire & Safety Services", "Public Art")) %>% 
