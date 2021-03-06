@@ -8,6 +8,7 @@ output:
     toc: TRUE
     df_print: paged
     code_download: true
+    code_folding: hide
 ---
 
 
@@ -63,6 +64,7 @@ library(lubridate)
 library(gganimate)
 library(transformr)
 library(gifski)
+library(RColorBrewer)
 ```
 
 
@@ -152,11 +154,21 @@ Adopted_Capital_Improvement_Budgets %>%
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
-  geom_col(fill = "darkgreen") +
-  scale_y_continuous(labels = scales::comma) +
+  geom_col(fill = "#FDB462") +
+  scale_y_continuous(labels = scales::dollar) +
   labs(title = "Yearly Total Adopted Capital Improvement Budgets",
-       subtitle = "2004 - 2021") +
-  theme(plot.title.position = "plot")
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
 ```
 
 ![](data_experimentation_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -168,21 +180,39 @@ g1 <- Adopted_Capital_Improvement_Budgets %>%
   add_count(SERVICE, name = "counts") %>% 
   mutate(s_reorder = fct_reorder(SERVICE, counts, .fun = max)) %>% 
   ggplot(aes(y = s_reorder)) +
-  geom_bar() +
+  geom_bar(fill = "#FDB462") +
   labs(title = "Amount of Projects by Service Type",
        x = "",
-       y = "") 
+       y = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
+        panel.grid.major.y = element_blank())
 
 g2 <- Adopted_Capital_Improvement_Budgets %>% 
   mutate(Service_reorder = fct_reorder(SERVICE, Amount, sum)) %>% 
   ggplot(aes(x = Amount, y = Service_reorder)) +
-  geom_col() +
+  geom_col(fill = "#FDB462") +
   labs(title = "Costs of Projects by Service Type ($)",
        x = "",
        y = "") +
-  scale_x_continuous(labels = scales::comma)
+  scale_x_continuous(labels = scales::dollar) +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
+        panel.grid.major.y = element_blank())
 
-service_g <- g2 / g1
+service_g <- g1 / g2
 service_g
 ```
 
@@ -194,7 +224,7 @@ g3 <- Adopted_Capital_Improvement_Budgets %>%
   add_count(DEPARTMENT, name = "counts") %>% 
   mutate(d_reorder = fct_reorder(DEPARTMENT, counts, .fun = max)) %>% 
   ggplot(aes(y = d_reorder)) +
-  geom_bar(fill = "darkkhaki") +
+  geom_bar(fill = "#FDB462") +
   labs(title = "Amount of Projects by Department Type",
        x = "",
        y = "") +
@@ -204,14 +234,14 @@ g3 <- Adopted_Capital_Improvement_Budgets %>%
         legend.background = element_rect("linen"),
         axis.ticks.x = element_blank(),
         axis.ticks.y = element_blank(),
-        panel.grid.major.x = element_line("grey75"),
-        panel.grid.minor.x = element_line("grey80"),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
         panel.grid.major.y = element_blank())
 
 g4 <- Adopted_Capital_Improvement_Budgets %>% 
   mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>% 
   ggplot(aes(x = Amount, y = department_reorder)) +
-  geom_col(fill = "darkkhaki") +
+  geom_col(fill = "#FDB462") +
   labs(title = "Costs of Projects by Department ($)",
        x = "",
        y = "") +
@@ -222,8 +252,8 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
         legend.background = element_rect("linen"),
         axis.ticks.x = element_blank(),
         axis.ticks.y = element_blank(),
-        panel.grid.major.x = element_line("grey75"),
-        panel.grid.minor.x = element_line("grey80"),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
         panel.grid.major.y = element_blank())
 
  department_g <- g3 / g4
@@ -231,6 +261,10 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
 ```
 
 ![](data_experimentation_files/figure-html/projects by department-1.png)<!-- -->
+
+> telling story with data: how have capital improvement budgets changed overtime?
+> change in proportion of service type of projects overtime?
+> how many projects per year were over the median value?
 
 
 ```r
@@ -241,13 +275,52 @@ Adopted_Capital_Improvement_Budgets %>%
   scale_x_continuous(labels = scales::percent) +
   theme(legend.position = "right",
         legend.direction = "vertical",
-        legend.text = element_text(size = 5),
-        plot.title.position = "plot") +
-  labs(title = "Department Project Amounts by Service Type",
-       subtitle = "Percent of Total Project Costs by Each Service Type",
+        legend.text = element_text(size = 7),
+        plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()) +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Percent of Total Project Costs by Each Service Type",
+       subtitle = "",
        x = "",
        y = "",
-       fill = "")
+       fill = "") 
 ```
 
 ![](data_experimentation_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(DEPARTMENT == c("Parks and Recreation", "Police", "Fire", "Library", "Fire & Safety Services", "Public Art")) %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(x = YEAR, y = Amount, fill = department_reorder)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Proportion of Yearly Community Facilities Project Costs by Department",
+       x = "",
+       y = "",
+       fill = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+```
+
+```
+## Warning in DEPARTMENT == c("Parks and Recreation", "Police", "Fire",
+## "Library", : longer object length is not a multiple of shorter object length
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
