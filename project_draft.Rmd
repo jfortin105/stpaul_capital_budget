@@ -16,7 +16,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r echo=FALSE}
 library(readr)
 library(tidyverse)
 library(patchwork)
@@ -27,12 +27,8 @@ library(gifski)
 library(RColorBrewer)
 ```
 
-```{r}
+```{r echo=FALSE}
 Adopted_Capital_Improvement_Budgets <- read_csv("Adopted_Capital_Improvement_Budgets.csv")
-
-Adopted_Capital_Improvement_Budgets %>% 
-  mutate(across(where(is.character), as.factor)) %>% 
-  summary()
 ```
 
 
@@ -60,7 +56,7 @@ Adopted_Capital_Improvement_Budgets %>%
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
-  geom_col(fill = "#F46D43") +
+  geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
   labs(title = "Yearly Adopted Capital Improvement Budget",
        subtitle = "2004 - 2021",
@@ -98,7 +94,7 @@ g1 <- Adopted_Capital_Improvement_Budgets %>%
   add_count(SERVICE, name = "counts") %>% 
   mutate(s_reorder = fct_reorder(SERVICE, counts, .fun = max)) %>% 
   ggplot(aes(y = s_reorder)) +
-  geom_bar(fill = "#F46D43") +
+  geom_bar(fill = "#FDB462") +
   labs(title = "Total Amount of Capital Improvement Projects by Service Type",
        x = "",
        y = "") +
@@ -134,3 +130,54 @@ service_g <- g1 / g2
 service_g
 ```
 
+From these visualizations, we can see that Community Facilities and Streets and Utilities are by far the largest two types of services being provided by adopted Capital Improvement Budget projects. Additionally, Streets and Utilities projects are significantly more expensive than Community Facilities projects.
+
+# How are Capital Improvement Projects Distributed Across City Departments?
+
+Another aspect of this data worth exploring is in what City departments projects are occuring, Or, more specifically, which City departments are implementing different CIB projects. Unfortunately, the data does not provide any information about who submitted each CIB project, but looking at which departments implemented each project will give us further insight into what capital is being built in the City of Saint Paul.
+
+```{r}
+g3 <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(DEPARTMENT, name = "counts") %>% 
+  mutate(d_reorder = fct_reorder(DEPARTMENT, counts, .fun = max)) %>% 
+  ggplot(aes(y = d_reorder)) +
+  geom_bar(fill = "#FDB462") +
+  labs(title = "Total Amount of Projects by City Department",
+       x = "",
+       y = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
+        panel.grid.major.y = element_blank())
+
+g4 <- Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>% 
+  ggplot(aes(x = Amount, y = department_reorder)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = "Total Costs of Projects by City Department",
+       x = "",
+       y = "") +
+  scale_x_continuous(labels = scales::dollar) +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_line("grey70"),
+        panel.grid.minor.x = element_line("grey85"),
+        panel.grid.major.y = element_blank())
+
+ department_g <- g3 / g4
+ department_g
+```
+
+An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but an even wider margin of total project costs can be attributed to this department alone. Another trend to note is
+the distinct groupings of departments with similar values within both the Project Costs and Amount of Projects visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the both the amount of projects and total costs of projects within each of these departments, all three have significantly more capital improvement projects and spend more on these projects. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar amounts and total costs of capital improvement projects, being significantly lower than the departments in the first group, but not as low as the next group. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments. Again, this group in general has very similar amounts and total costs of capital improvement projects. What is most interesting is how both of these grouping trends are present in both visualizations. One possible reason for this trend could be that certain projects or budget items from certain departments did not meet the temporal aspects of the capital definition set by the CIB Committee and the City of Saint Paul. In this way, these projects would be included within other budgets.
+
+the amount and cost of capital improvement projects being implemented by the Parks and Recreation and Planning and Economic Development Departments. While these departments did not have nearly as many projects or spend as much on projects, they both did still create more and spend more on capital improvement projects than most other departments. 

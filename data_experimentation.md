@@ -155,7 +155,7 @@ Adopted_Capital_Improvement_Budgets %>%
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
-  geom_col(fill = "#F46D43") +
+  geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
   labs(title = "Yearly Total Adopted Capital Improvement Budgets",
        subtitle = "2004 - 2021",
@@ -181,7 +181,7 @@ g1 <- Adopted_Capital_Improvement_Budgets %>%
   add_count(SERVICE, name = "counts") %>% 
   mutate(s_reorder = fct_reorder(SERVICE, counts, .fun = max)) %>% 
   ggplot(aes(y = s_reorder)) +
-  geom_bar(fill = "#F46D43") +
+  geom_bar(fill = "#FDB462") +
   labs(title = "Amount of Projects by Service Type",
        x = "",
        y = "") +
@@ -276,7 +276,7 @@ Adopted_Capital_Improvement_Budgets %>%
   scale_x_continuous(labels = scales::percent) +
   theme(legend.position = "bottom",
         legend.direction = "horizontal",
-        legend.text = element_text(size = 7),
+        legend.text = element_text(size = 8),
         plot.title.position = "plot",
         plot.background = element_rect("linen"), 
         panel.background = element_rect("linen"),
@@ -286,8 +286,8 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
-  scale_fill_brewer(palette = "Set3") +
-  labs(title = "Proportion of Service Type of Project Amounts by Department",
+  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
+  labs(title = "Proportion of Department Total Project Costs by Service Type",
        subtitle = "Across all Years of Data",
        x = "",
        y = "",
@@ -295,7 +295,7 @@ Adopted_Capital_Improvement_Budgets %>%
 ```
 
 ![](data_experimentation_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
-> 1 = Community Facilities, 2 = Internal Service, 3 = Residential and Economic Development, 4 = Streets and Utilities
+
 
 
 ```r
@@ -305,7 +305,7 @@ Adopted_Capital_Improvement_Budgets %>%
   ggplot(aes(y = department_reorder, x = counts, fill = SERVICE)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_x_continuous(labels = scales::percent) +
-  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#F46D43", "darksalmon","#D53E4F", "#FEE08B")) +
+  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
   theme(legend.position = "bottom",
         legend.direction = "horizontal",
         plot.title.position = "plot",
@@ -318,7 +318,7 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
-  labs(title = "Proportion of Service Type of Projects by Department",
+  labs(title = "Proportion of Total Number of Projects per Department by Service Type",
        subtitle = "Across all Years of Data",
        x = "",
        y = "",
