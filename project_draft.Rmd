@@ -41,7 +41,7 @@ The Capital Improvement Budget is the system that the City of Saint Paul uses to
 > “ Projects are eligible if they finance the acquisition, betterment, physical development, redevelopment and other improvement of City-owned land and buildings, and have a useful life of at least ten years.” 
 
 Underlying this system is a two-year cycle for proposals that was created in 2019, where both City departments and the community have separate years to submit Capital Improvement projects to the CIB committee. Additional information regarding this cycle, the CIB committee, and the placement of the CIB in the larger City of Saint Paul Budget can be found at the Capital Improvement Budget Process [website](https://www.stpaul.gov/departments/financial-services/capital-improvement-budget-process). 
-As someone who is interested in municipal infrastructure and a resident of Saint Paul, I am interested in seeing where our City is investing in its capital infrastructure. To this end, I am interested in a few different questions:
+As someone who is interested in municipal infrastructure and a resident of Saint Paul, I am interested in seeing where our City is investing in its capital infrastructure. To this end, I am interested in a few different questions centered in this thinking:
 
 > How has the CIB changed over time?
 
@@ -177,7 +177,69 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
  department_g
 ```
 
-An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but an even wider margin of total project costs can be attributed to this department alone. Another trend to note is
-the distinct groupings of departments with similar values within both the Project Costs and Amount of Projects visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the both the amount of projects and total costs of projects within each of these departments, all three have significantly more capital improvement projects and spend more on these projects. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar amounts and total costs of capital improvement projects, being significantly lower than the departments in the first group, but not as low as the next group. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments. Again, this group in general has very similar amounts and total costs of capital improvement projects. What is most interesting is how both of these grouping trends are present in both visualizations. One possible reason for this trend could be that certain projects or budget items from certain departments did not meet the temporal aspects of the capital definition set by the CIB Committee and the City of Saint Paul. In this way, these projects would be included within other budgets.
+An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but an even wider margin of total project costs can be attributed to this department alone. 
 
-the amount and cost of capital improvement projects being implemented by the Parks and Recreation and Planning and Economic Development Departments. While these departments did not have nearly as many projects or spend as much on projects, they both did still create more and spend more on capital improvement projects than most other departments. 
+Another trend to note is the appearance of three distinct groupings of departments with similar values in the Project Costs visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the total costs of projects within each of these departments, all three spend more on these projects than the other departments. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar total costs of capital improvement projects. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments, in general has very similar total costs of capital improvement projects and have significantly lower costs than either of two other groups. The importance of these apparent groupings is the observation that capital is not necessarily a large aspect of a City departments operations. For some departments, such as the first grouping, significant amounts of money are being spent on capital improvement projects. For others, such as Public Art, there is a very small amount of money being spent on capital improvement projects. This is not to say that the Public Art department is not adding to the community at all, they are likely not implementing projects or programs that meet the definition of Capital Improvement set by the CIB Committee and the City of Saint Paul. In this way, these other activities would be included in other budgets.
+
+At this point, we have looked at the breakdown of Capital Improvement Projects / Budget Items by their Service type and their Department. These visualizations leads to another interesting question: how are Capital Improvement Projects distributed by service type AND department?
+
+# How are Capital Improvement Projects distributed by Service type and Department?
+
+Below is a set of visualizations comparing the proportion of total costs and amount of projects by department and service types.
+
+```{r}
+g_amount <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(SERVICE, name = "counts") %>%
+  mutate(department_reorder = fct_reorder(DEPARTMENT, counts, sum)) %>%
+  ggplot(aes(y = DEPARTMENT, x = counts, fill = SERVICE)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_x_continuous(labels = scales::percent) +
+  scale_fill_manual(labels = c("Community Facil.", "Internal Serv.", "Resident / Econ Develop.", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
+  theme(legend.position = "right",
+        legend.direction = "vertical",
+        plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        legend.text = element_text(size = 8),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()) +
+  labs(title = "Proportion of Total Number of Projects by Service Type and per Department",
+       subtitle = "",
+       x = "",
+       y = "",
+       fill = "")
+
+g_cost <- Adopted_Capital_Improvement_Budgets %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(y = DEPARTMENT, x = Amount, fill = SERVICE)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_x_continuous(labels = scales::percent) +
+  theme(legend.position = "right",
+        legend.direction = "vertical",
+        legend.text = element_text(size = 8),
+        plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()) +
+  scale_fill_manual(labels = c("Community Facil.", "Internal Serv.", "Resident / Econ Develop.", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
+  labs(title = "Proportion of Total Costs of Projects by Service Type and per Department",
+       subtitle = "",
+       x = "",
+       y = "",
+       fill = "")
+
+g_amount / g_cost
+```
+
+Similarly to the previous visualizations comparing Costs of Projects and Amount of Projects, we can see that a large amount of projects in certain service types does not mean that those projects had a correspondingly large amount of costs. Specifically, we observe that the Community Facility service type makes up a large proportion of the total number of projects for the Safety and Inspections, Office of Technology, General Government, and Financial Services departments, but this service type makes up a small proportion of the total costs of projects in these same departments. 
+
+Another important trend I would like to not is the departments whose Capital Improvement Projects exclusively provide Community Facility services. These include the Public Art, Police, Parks and Recreation, Library, Fire, and Fire and Safety Services departments. While many other departments also implement Community Facility services to the residents of Saint Paul, these exlcusive departments in that they implement no other service type. 

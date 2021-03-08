@@ -269,13 +269,13 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
 
 
 ```r
-Adopted_Capital_Improvement_Budgets %>% 
+g_cost <- Adopted_Capital_Improvement_Budgets %>% 
   mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
   ggplot(aes(y = department_reorder, x = Amount, fill = SERVICE)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_x_continuous(labels = scales::percent) +
-  theme(legend.position = "bottom",
-        legend.direction = "horizontal",
+  theme(legend.position = "right",
+        legend.direction = "vertical",
         legend.text = element_text(size = 8),
         plot.title.position = "plot",
         plot.background = element_rect("linen"), 
@@ -286,28 +286,26 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
-  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
-  labs(title = "Proportion of Department Total Project Costs by Service Type",
-       subtitle = "Across all Years of Data",
+  scale_fill_manual(labels = c("Community Facil.", "Internal Serv.", "Resident / Econ Develop.", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
+  labs(title = "Proportion of Total Costs of Projects per Department by Service Type",
+       subtitle = "",
        x = "",
        y = "",
        fill = "")
 ```
 
-![](data_experimentation_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
-
 
 
 ```r
-Adopted_Capital_Improvement_Budgets %>% 
+g_amount <- Adopted_Capital_Improvement_Budgets %>% 
   add_count(SERVICE, name = "counts") %>%
   mutate(department_reorder = fct_reorder(DEPARTMENT, counts, sum)) %>%
   ggplot(aes(y = department_reorder, x = counts, fill = SERVICE)) +
   geom_bar(position = "fill", stat = "identity") +
   scale_x_continuous(labels = scales::percent) +
-  scale_fill_manual(labels = c("Community", "Internal", "Resident / Econ Develop", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
-  theme(legend.position = "bottom",
-        legend.direction = "horizontal",
+  scale_fill_manual(labels = c("Community Facil.", "Internal Serv.", "Resident / Econ Develop.", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
+  theme(legend.position = "right",
+        legend.direction = "vertical",
         plot.title.position = "plot",
         plot.background = element_rect("linen"), 
         panel.background = element_rect("linen"),
@@ -319,13 +317,20 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
   labs(title = "Proportion of Total Number of Projects per Department by Service Type",
-       subtitle = "Across all Years of Data",
+       subtitle = "",
        x = "",
        y = "",
        fill = "")
 ```
 
-![](data_experimentation_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
+```r
+g_amount / g_cost
+```
+
+![](data_experimentation_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 
 
 
@@ -356,5 +361,5 @@ Adopted_Capital_Improvement_Budgets %>%
 ## "Library", : longer object length is not a multiple of shorter object length
 ```
 
-![](data_experimentation_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](data_experimentation_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
