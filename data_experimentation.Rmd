@@ -207,7 +207,7 @@ g_amount / g_cost
 
 ```{r}
 Adopted_Capital_Improvement_Budgets %>% 
-  filter(DEPARTMENT == c("Parks and Recreation", "Police", "Fire", "Library", "Fire & Safety Services", "Public Art")) %>% 
+  filter(SERVICE == "Community Facilities") %>%
   mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
   ggplot(aes(x = YEAR, y = Amount, fill = department_reorder)) +
   geom_bar(position = "fill", stat = "identity") +
@@ -225,5 +225,10 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank())
+```
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(DEPARTMENT == c("Fire & Safety Services", "Public Art")) 
 ```
 

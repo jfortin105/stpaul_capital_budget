@@ -32,24 +32,34 @@ Adopted_Capital_Improvement_Budgets <- read_csv("Adopted_Capital_Improvement_Bud
 ```
 
 
-# Introduction and Background
+# Introduction
 
-This dataset comes from the [City of Saint Paul](https://information.stpaul.gov/City-Administration/Adopted-Capital-Improvement-Budgets-Dataset/c6jd-rwmu) and contains projects that were adopted as part of the City’s capital improvement budget from 2004 - 2021. This dataset contains 1,931 rows, each representing a single project or budget item, and 12 columns which describe different aspects of these projects / budget items. To clarify, the year attributed to each project / budget item delineates the year the project / budget item was adopted into the CIB, not the date of its completion. 
+As a junior in college, I've reached the point in my college career - and my life - that I've finally "flown the coop" for real and found myself moving into a rental house last summer with 5 friends. While this experience has been very enjoyable and filled with many surprises, often unfortunately involving mold - one thing I wasn't expecting was to develop an interest in municipal infrastructure. In addition to starting to pay water and garbage bills, deal with a variety of parking restrictions, and voting in local elections, I also worked as an intern at a neighboring city doing GIS work. From all of these experience, I discovered the relatively unknown world of local and municipal government and all the mundane sounding joys that comprise it. From this new interest, I came to be curious about the city where I now live, Saint Paul, and the make-up of its infrastructure, which led me to a very interesting dataset titled "Adopted Capital Improvement Budgets". With this dataset, I will attempt to better understand the City of Saint Paul's municipal infrastructure.
 
-The Capital Improvement Budget is the system that the City of Saint Paul uses to fund the maintenance and construction of municipal infrastructure. The CIB is created by the 18 residents of Saint Paul who make up the Capital Improvement Budget Committee. The CIB Committee creates the CIB by reviewing and recommending projects, along with funding levels, to the Mayor for eventual approval by the Mayor and City Council as part of the larger budget process. The types of projects reviewed and submitted follow the guidelines set by the City: 
+The Adopted Capital Improvement dataset, as I've mentioned, comes from the [City of Saint Paul](https://information.stpaul.gov/City-Administration/Adopted-Capital-Improvement-Budgets-Dataset/c6jd-rwmu) and contains projects that were adopted as part of the City’s capital improvement budgets from the years of 2004 to 2021. I collected this data from the aforementioned site as a csv file which was later imported into Rstudio.
+
+This dataset contains 1,931 rows, each representing a single project or budget item, and 12 columns which contain descriptions of different aspects of these projects / budget items. Some of these variable columns include: the year of project adoption into the Capital Improvement Budget, name of the project, description of the project, financial code associated with each project, and much more. To clarify, the year attributed to each project / budget item delineates the year the project / budget item was adopted into the CIB, not the date of its completion. As an aspect of our analysis later on, it is important to understand this distinction.
+
+# Background
+
+The Capital Improvement Budget (CIB) is the system that the City of Saint Paul uses to fund the maintenance and construction of municipal infrastructure. The CIB is created by the 18 residents of Saint Paul who make up the Capital Improvement Budget Committee. The CIB Committee creates the CIB by reviewing and recommending projects, along with funding levels, to the Mayor for eventual approval by the Mayor and City Council as part of the larger budget process. The types of projects reviewed and submitted follow the guidelines set by the City: 
 
 > “ Projects are eligible if they finance the acquisition, betterment, physical development, redevelopment and other improvement of City-owned land and buildings, and have a useful life of at least ten years.” 
 
 Underlying this system is a two-year cycle for proposals that was created in 2019, where both City departments and the community have separate years to submit Capital Improvement projects to the CIB committee. Additional information regarding this cycle, the CIB committee, and the placement of the CIB in the larger City of Saint Paul Budget can be found at the Capital Improvement Budget Process [website](https://www.stpaul.gov/departments/financial-services/capital-improvement-budget-process). 
-As someone who is interested in municipal infrastructure and a resident of Saint Paul, I am interested in seeing where our City is investing in its capital infrastructure. To this end, I am interested in a few different questions centered in this thinking:
+As someone who is interested in municipal infrastructure and a resident of Saint Paul, I am interested in seeing how and in what forms the City of Saint Paul is implementing capital into its municipal infrastructure. To this end, I am interested in a few different questions centered in this thinking:
 
-> How has the CIB changed over time?
+>How has the CIB changed over time?
 
 >What kinds of services are CIB projects providing? 
 
 >How are projects distributed across City Departments?
 
+>Overall, how do these projects affect the community?
+
 # Capital Improvement Budget Over Time
+
+To start off, here is a visualization of the whole time span of this dataset (2004 - 2021), showing the Adopted Capital Improvement Budget for each year.
 
 ```{r}
 Adopted_Capital_Improvement_Budgets %>% 
@@ -73,11 +83,11 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank())
 ```
 
-We can learn a few things from this visualization. First, we can see that there's a lot of variation in the yearly Adopted Capital Improvement Budget. Across the 17 year range of data, the smallest Adopted Capital Improvement Budget was only $40,148,048 in 2012 -  while the largest occured only 2 years later in 2014 at $123,223,000. Additionally, we can see that since the adoption of the new CIB committee goals and two year budget cycle in 2019 that there has been a steady increase in the cost of the CIB. While only 3 years of data is not enough to establish the existence of a trend like this, it is something that will be interesting to keep an eye on as the years progress and the CIB Committee continues these new policies
+We can learn a few things from this visualization. First, we can see that there's a lot of variation in the yearly Adopted Capital Improvement Budget from year to year. Across the 17 year range of data, the smallest Adopted Capital Improvement Budget was only $40,148,048 in 2012 -  while the largest occured only 2 years later in 2014 at $123,223,000. Secondly, there is not major overarching trend in the data. We can't see any major trends indicating a pattern of increasing, decreasing, or stagnating CIB size or cost over time. However, we can see that since the adoption of the new CIB committee's two year budget cycle in 2019, there has been a steady increase in the size of the CIB. While only 3 years of data is not enough to establish the existence of a trend like this, it is something that will be interesting to keep an eye on as the years progress and the CIB Committee continues these new policies.
 
 # What Kinds of Services do Capital Improvement Projects Provide?
 
-This data set includes a categorical variable, SERVICE, which describes the type of service that the project / budget item provides to the community, broken down into 4 categories:
+Luckily for us, our dataset contains a variable that describes the types of services that each project provides, broken down into 4 categories:
 
 > Community Facilities
 
@@ -86,6 +96,8 @@ This data set includes a categorical variable, SERVICE, which describes the type
 > Streets and Utilities
 
 > Internal Service
+
+Unfortunately, there is no further definition of what exactly these service type categories are in the dataset, and there was not accessible metadata on the download site. However, the titles of these categories are descriptive enough to get some understanding of their nature: community facilities seems to point to capital that is accessible to the community, residential and economic development corresponding to capital that would assist in the development of the economic well being of individuals, Streets and Utilities pertaining to the municipal infrastructures of the streets and utilities, and internal service as a service benefiting the government itself. While this absence of formal definition somewhat hinders our understanding of what services are being provided by adopted Capital Improvement projects, we can still use visualizations to see how projects are distributed across these existing categories without making unsubstantiated claims about what exactly these services are providing. 
 
 In the visualizations below, I have broken down the distribution of projects by service type in two ways: by the total amount of projects in each service type, and the total cost of projects in each service type
 
@@ -130,7 +142,7 @@ service_g <- g1 / g2
 service_g
 ```
 
-From these visualizations, we can see that Community Facilities and Streets and Utilities are by far the largest two types of services being provided by adopted Capital Improvement Budget projects. Additionally, Streets and Utilities projects are significantly more expensive than Community Facilities projects.
+From these visualizations, we can see that Community Facilities and Streets and Utilities are by far the largest two types of services being provided by adopted Capital Improvement Budget projects. Additionally, there is not a direct correlation between the number of projects and total costs. As we can see, Community Facilities projects have similar amount of projects to those that provide Streets and Utilities services, but have a significantly lower cost than their Streets and Utilities counterparts. 
 
 # How are Capital Improvement Projects Distributed Across City Departments?
 
@@ -177,9 +189,11 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
  department_g
 ```
 
+Before we breakdown these visualizations, I want to clarify how these projects are being funded. According to the City of Saint Paul's [website](https://www.stpaul.gov/departments/financial-services/capital-improvement-budget-process) on the Capital Improvement Budget, funding for capital improvement projects comes from a variety of sources, including the state and federal governments and other local sources. Therefore, we cannot assume that any of the project costs in the above visualizations or any other are being funded exclusively by taxpayers. 
+
 An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but an even wider margin of total project costs can be attributed to this department alone. 
 
-Another trend to note is the appearance of three distinct groupings of departments with similar values in the Project Costs visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the total costs of projects within each of these departments, all three spend more on these projects than the other departments. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar total costs of capital improvement projects. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments, in general has very similar total costs of capital improvement projects and have significantly lower costs than either of two other groups. The importance of these apparent groupings is the observation that capital is not necessarily a large aspect of a City departments operations. For some departments, such as the first grouping, significant amounts of money are being spent on capital improvement projects. For others, such as Public Art, there is a very small amount of money being spent on capital improvement projects. This is not to say that the Public Art department is not adding to the community at all, they are likely not implementing projects or programs that meet the definition of Capital Improvement set by the CIB Committee and the City of Saint Paul. In this way, these other activities would be included in other budgets.
+Another trend to note is the appearance of three distinct groupings of departments with similar values in the Project Costs visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the total costs of projects within each of these departments, all three spend more on these projects than the other departments. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar total costs of capital improvement projects. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments, in general has very similar total costs of capital improvement projects and have significantly lower costs than either of two other groups. The importance of these apparent groupings is the observation that capital is not necessarily a large aspect of a City departments operations. For some departments, such as the first grouping, significant amounts of money are being spent on capital improvement projects. For others, such as Public Art, there is a very small amount of money being spent on capital improvement projects. This is not to say that the Public Art department is not adding to the community at all, they are likely not implementing projects or programs that meet the definition of Capital Improvement set by the CIB Committee and the City of Saint Paul. In this way, these other activities would be included in other budgets. Another even simpler explanation could be that some projects just have very cheap capital improvement projects that don't require the millions of dollars that the Public Works department does. 
 
 At this point, we have looked at the breakdown of Capital Improvement Projects / Budget Items by their Service type and their Department. These visualizations leads to another interesting question: how are Capital Improvement Projects distributed by service type AND department?
 
@@ -240,6 +254,45 @@ g_cost <- Adopted_Capital_Improvement_Budgets %>%
 g_amount / g_cost
 ```
 
-Similarly to the previous visualizations comparing Costs of Projects and Amount of Projects, we can see that a large amount of projects in certain service types does not mean that those projects had a correspondingly large amount of costs. Specifically, we observe that the Community Facility service type makes up a large proportion of the total number of projects for the Safety and Inspections, Office of Technology, General Government, and Financial Services departments, but this service type makes up a small proportion of the total costs of projects in these same departments. 
+Similarly to the previous visualizations comparing Costs of Projects and Amount of Projects, we can see that a department having large amount of projects in certain service types does not mean that those departments spent a correspondingly large amount of costs on those projects. Specifically, we observe that the Community Facility service type makes up a large proportion of the total number of projects for the Safety and Inspections, Office of Technology, General Government, and Financial Services departments, but this service type makes up a small proportion of the total costs of projects in these same departments. 
 
-Another important trend I would like to not is the departments whose Capital Improvement Projects exclusively provide Community Facility services. These include the Public Art, Police, Parks and Recreation, Library, Fire, and Fire and Safety Services departments. While many other departments also implement Community Facility services to the residents of Saint Paul, these exlcusive departments in that they implement no other service type. 
+Another important trend I would like to note is the departments whose Capital Improvement Projects exclusively provide Community Facility services. These include the Public Art, Police, Parks and Recreation, Library, Fire, and Fire and Safety Services departments. While many other departments also implement Community Facility services to the residents of Saint Paul, these exclusive departments in that they implement no other service type. 
+
+### Community Facilities Capital Improvement Projects
+
+To examine this phenomenon further, below is a visualization showing the the 6 Community Facility exclusive departments (Public Art, Fire and Safety Services, Library, Fire, Police, and Parks and Recreation) and the proportion of the 
+
+```{r}
+Adopted_Capital_Improvement_Budgets %>% 
+  filter(DEPARTMENT == c("Parks and Recreation", "Police", "Fire", "Library", "Fire & Safety Services", "Public Art")) %>% 
+  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
+  ggplot(aes(x = YEAR, y = Amount, fill = department_reorder)) +
+  geom_bar(position = "fill", stat = "identity") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Proportion of Yearly Community Facilities Project Costs by Exclusive Departments",
+       x = "",
+       y = "",
+       fill = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+```
+
+
+# Conclusion
+
+Through the use of different visualization techniques, we have come to new understandings about the City of Saint Paul's Capital Improvement Budget and the types of projects included in this budget. Specifically, we've learned that:
+
+>There are no major patterns in the cost of CIB overtime
+
+> The service categories with the most projects are Community Facilties and Streets and Utilities, but Streets and Utilities projects are have the highest total cost across all years of the Data
+
+>The Public Works department accounts for the largest amounts and highest costs of projects
+
+> 
