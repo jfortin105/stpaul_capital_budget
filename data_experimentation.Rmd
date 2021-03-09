@@ -36,7 +36,7 @@ Adopted_Capital_Improvement_Budgets %>%
 ```
 
 ```{r}
-Adopted_Capital_Improvement_Budgets %>% 
+g_yearly <- Adopted_Capital_Improvement_Budgets %>% 
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
@@ -55,6 +55,131 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.y = element_line("grey85"),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
+
+g_med <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_median = median(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_median)) +
+  geom_col(fill = "#FDB462") +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Yearly Median Adopted Capital Improvement Budgets",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_mean <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_mean = mean(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_mean)) +
+  geom_col(fill = "#FDB462") +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Yearly Mean Adopted Capital Improvement Budgets",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_count = n()) %>% 
+  ggplot(aes(x = YEAR, y = year_count)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = "Amount of Adopted Capital Improvement Projects per Year",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+(g_yearly / g_yearly_counts) | (g_mean / g_med)
+```
+
+```{r}
+g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(SERVICE, name = "counts") %>% 
+  group_by(YEAR) %>% 
+  summarize(year_count = sum(counts)) %>% 
+  ggplot(aes(x = YEAR, y = year_count)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = "Total Adopted Capital Improvement Budgets Projects per Year",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_med_counts <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(SERVICE, name = "counts") %>% 
+  group_by(YEAR) %>% 
+  summarize(year_counts_med = median(counts)) %>% 
+  ggplot(aes(x = YEAR, y = year_counts_med)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = " Median Adopted Capital Improvement Budget Projects per Year",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_mean_counts <- Adopted_Capital_Improvement_Budgets %>% 
+  add_count(SERVICE, name = "counts") %>% 
+  group_by(YEAR) %>% 
+  summarize(year_mean_counts = mean(counts)) %>% 
+  ggplot(aes(x = YEAR, y = year_mean_counts)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = "Mean Adopted Capital Improvement Budget Projects per Year",
+       subtitle = "2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_yearly_counts | (g_mean_counts / g_med_counts)
 ```
 
 

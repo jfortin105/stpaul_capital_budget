@@ -57,18 +57,28 @@ As someone who is interested in municipal infrastructure and a resident of Saint
 
 >Overall, how do these projects affect the community?
 
+In order to attemot to answer these questions, I will be rooting my analysis in two aspects of this dataset: the amount and cost of Capital Improvement projects. I believe that analyzing these two aspects of projects will be illuminating for the overall state of Saint Paul's CIB.
+
 # Capital Improvement Budget Over Time
 
-To start off, here is a visualization of the whole time span of this dataset (2004 - 2021), showing the Adopted Capital Improvement Budget for each year.
+To start off, here are 4 visualization of the whole time span of this dataset (2004 - 2021), showing:
+
+>The Yearly CIB
+
+>The Average Cost of CIB Projects Per Year
+
+>The Median Cost of CIB Projects Per Year
+
+>The Amount of CIB Projects per Year
 
 ```{r}
-Adopted_Capital_Improvement_Budgets %>% 
+g_yearly <- Adopted_Capital_Improvement_Budgets %>% 
   group_by(YEAR) %>% 
   summarize(year_amount = sum(Amount)) %>% 
   ggplot(aes(x = YEAR, y = year_amount)) +
   geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
-  labs(title = "Yearly Adopted Capital Improvement Budget",
+  labs(title = "Yearly Total Adopted CIB",
        subtitle = "2004 - 2021",
        y = "",
        x = "") +
@@ -81,9 +91,78 @@ Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.y = element_line("grey85"),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
+
+g_med <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_median = median(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_median)) +
+  geom_col(fill = "#FDB462") +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Median Adopted CIB Project Cost",
+       subtitle = "Per Year: 2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_mean <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_mean = mean(Amount)) %>% 
+  ggplot(aes(x = YEAR, y = year_mean)) +
+  geom_col(fill = "#FDB462") +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Average Adopted CIB Project Cost",
+       subtitle = "Per Year 2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>% 
+  group_by(YEAR) %>% 
+  summarize(year_count = n()) %>% 
+  ggplot(aes(x = YEAR, y = year_count)) +
+  geom_col(fill = "#FDB462") +
+  labs(title = "Amount of Adopted CIB Projects",
+       subtitle = "Per Year: 2004 - 2021",
+       y = "",
+       x = "") +
+  theme(plot.title.position = "plot",
+        plot.background = element_rect("linen"), 
+        panel.background = element_rect("linen"),
+        legend.background = element_rect("linen"),
+        axis.ticks.y = element_blank(),
+        panel.grid.major.y = element_line("grey70"),
+        panel.grid.minor.y = element_line("grey85"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+
+(g_yearly / g_yearly_counts) | (g_mean / g_med)
 ```
 
-We can learn a few things from this visualization. First, we can see that there's a lot of variation in the yearly Adopted Capital Improvement Budget from year to year. Across the 17 year range of data, the smallest Adopted Capital Improvement Budget was only $40,148,048 in 2012 -  while the largest occured only 2 years later in 2014 at $123,223,000. Secondly, there is not major overarching trend in the data. We can't see any major trends indicating a pattern of increasing, decreasing, or stagnating CIB size or cost over time. However, we can see that since the adoption of the new CIB committee's two year budget cycle in 2019, there has been a steady increase in the size of the CIB. While only 3 years of data is not enough to establish the existence of a trend like this, it is something that will be interesting to keep an eye on as the years progress and the CIB Committee continues these new policies.
+We can learn a few things from each visualization. From the first visualization, we can see that there's a lot of variation in the yearly Adopted Capital Improvement Budget from year to year. Across the 17 year range of data, the smallest Adopted Capital Improvement Budget was only $40,148,048 in 2012 -  while the largest occured only 2 years later in 2014 at $123,223,000. Secondly, there is no apparent major overarching trend in this visualization. We can't see any major trends indicating a pattern of increasing, decreasing, or stagnating CIB cost over time. However, we can see that since the adoption of the new CIB committee's two year budget cycle in 2019, there has been a steady increase in the size of the CIB. While only 3 years of data is not enough to establish the existence of a trend like this, it is something that will be interesting to keep an eye on as the years progress and the CIB Committee continues these new policies.
+
+From the "Average Adopted CIB Project Cost" visualization, we can see that there is again, no prevailing pattern in the data being visualized. However, we can see that the magnitude of yearly total CIB and average CIB project costs are very similar for each year. For instance, 2010 and 2014, two of the years with the highest CIB were also the years with the highest average CIB project costs. 
+
+However, the average or mean is not always the best measure of central tendency for a dataset, as it is very easily affected by outliers in the data. To this end, I also included a visualization of the median CIB project cost per year. When comparing the median and average visualizations, we can see the median costs of projects per year are significantly lower than the average values. This could be indicative that there are outliers in the data, in the form of projects that have significantly higher costs than other projects in the dataset. Interestingly, some of the trends we noticed in the other two visualizations are not included in the median project cost visualization. For instance, 2010 and 2011 have the same median project cost, but 2010 has a significantly higher total CIB and average CIB project cost. However, 2014 still has the highest value, similar to the other visualizations. 
+
+Finally, the last visualization shows the amount of CIB projects per year and has more consistent trends than the other visualizations. Almost all years had around 100 adopted CIB projects, with some variation apparent in years like 2014 having the most projects in any one year. Something I found fascinating was the inverse of a trend we noticed in the Yearly Total Adopted CIB visualizations. Starting in 2019, when the CIB committee adopted its new budgetary policies, we can see a decline in the amount of projects per year, while in the other visualization we saw an increase in the total cost of projects for those same years (2019, 2020, 2021). Again, this is not enough time to establish that this is a prominent trend in the data, or that it can be attributed to the change in CIB procedure, but it is something that I think is worth watching in the future. 
+
+Overall, it is apparent that the CIB has varied alot of the years, mostly in terms of it's total yearly total and its average project cost, while the amount of projects and median project costs have been more consistent. 
 
 # What Kinds of Services do Capital Improvement Projects Provide?
 
@@ -97,7 +176,7 @@ Luckily for us, our dataset contains a variable that describes the types of serv
 
 > Internal Service
 
-Unfortunately, there is no further definition of what exactly these service type categories are in the dataset, and there was not accessible metadata on the download site. However, the titles of these categories are descriptive enough to get some understanding of their nature: community facilities seems to point to capital that is accessible to the community, residential and economic development corresponding to capital that would assist in the development of the economic well being of individuals, Streets and Utilities pertaining to the municipal infrastructures of the streets and utilities, and internal service as a service benefiting the government itself. While this absence of formal definition somewhat hinders our understanding of what services are being provided by adopted Capital Improvement projects, we can still use visualizations to see how projects are distributed across these existing categories without making unsubstantiated claims about what exactly these services are providing. 
+Unfortunately, there is no further definition of what exactly these service type categories are in the dataset, and there was not accessible metadata on the download site that could help define these categories. However, the titles of these categories are descriptive enough to get some understanding of their nature: community facilities seems to point to capital that is accessible to the community, residential and economic development corresponding to capital that would assist in the development of the economic well being of individuals, Streets and Utilities pertaining to the municipal infrastructures of the streets and utilities, and internal service as a service benefiting the government itself. While this absence of formal definition somewhat hinders our understanding of what services are being provided by adopted Capital Improvement projects, we can still use visualizations to see how projects are distributed across these existing categories without making unsubstantiated claims about what exactly these services are providing. 
 
 In the visualizations below, I have broken down the distribution of projects by service type in two ways: by the total amount of projects in each service type, and the total cost of projects in each service type
 
@@ -146,7 +225,7 @@ From these visualizations, we can see that Community Facilities and Streets and 
 
 # How are Capital Improvement Projects Distributed Across City Departments?
 
-Another aspect of this data worth exploring is in what City departments projects are occuring, Or, more specifically, which City departments are implementing different CIB projects. Unfortunately, the data does not provide any information about who submitted each CIB project, but looking at which departments implemented each project will give us further insight into what capital is being built in the City of Saint Paul.
+Another aspect of this data worth exploring is in what City departments projects are occurring, or, more specifically, which City departments are implementing different CIB projects. Unfortunately, the data does not provide any information about who submitted each CIB project, but looking at which departments implemented each project will give us further insight into what capital is being built in the City of Saint Paul.
 
 ```{r}
 g3 <- Adopted_Capital_Improvement_Budgets %>% 
@@ -191,13 +270,13 @@ g4 <- Adopted_Capital_Improvement_Budgets %>%
 
 Before we breakdown these visualizations, I want to clarify how these projects are being funded. According to the City of Saint Paul's [website](https://www.stpaul.gov/departments/financial-services/capital-improvement-budget-process) on the Capital Improvement Budget, funding for capital improvement projects comes from a variety of sources, including the state and federal governments and other local sources. Therefore, we cannot assume that any of the project costs in the above visualizations or any other are being funded exclusively by taxpayers. 
 
-An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but an even wider margin of total project costs can be attributed to this department alone. 
+An important trend to highlight is the vast amount of projects being executed by the Public Works department. Not only is the Public Works department implementing a vast number of projects, but the department is also implementing projects at a greater total cost than any other department by an even more significant margin. 
 
 Another trend to note is the appearance of three distinct groupings of departments with similar values in the Project Costs visualizations. In the first group, we have the Public Works, Parks and Recreation, and Planning and Economic Development departments. While there are vast margins between the total costs of projects within each of these departments, all three spend more on these projects than the other departments. The second group is made up of the General Government, Library, Police, and Fire Departments. In contrast to the first group, this grouping has very similar total costs of capital improvement projects. The final group, made up of the Safety and Inspections, Financial Services, Office of Technology, Fire and Safety Services, and Public Art departments, in general has very similar total costs of capital improvement projects and have significantly lower costs than either of two other groups. The importance of these apparent groupings is the observation that capital is not necessarily a large aspect of a City departments operations. For some departments, such as the first grouping, significant amounts of money are being spent on capital improvement projects. For others, such as Public Art, there is a very small amount of money being spent on capital improvement projects. This is not to say that the Public Art department is not adding to the community at all, they are likely not implementing projects or programs that meet the definition of Capital Improvement set by the CIB Committee and the City of Saint Paul. In this way, these other activities would be included in other budgets. Another even simpler explanation could be that some projects just have very cheap capital improvement projects that don't require the millions of dollars that the Public Works department does. 
 
 At this point, we have looked at the breakdown of Capital Improvement Projects / Budget Items by their Service type and their Department. These visualizations leads to another interesting question: how are Capital Improvement Projects distributed by service type AND department?
 
-# How are Capital Improvement Projects distributed by Service type and Department?
+# How are Capital Improvement Projects Distributed by Service Type and Department?
 
 Below is a set of visualizations comparing the proportion of total costs and amount of projects by department and service types.
 
@@ -221,8 +300,8 @@ g_amount <- Adopted_Capital_Improvement_Budgets %>%
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
-  labs(title = "Proportion of Total Number of Projects by Service Type and per Department",
-       subtitle = "",
+  labs(title = "Proportion of Total Number of Department CIB Projects by Service Type",
+       subtitle = "2004 - 2021",
        x = "",
        y = "",
        fill = "")
@@ -245,8 +324,8 @@ g_cost <- Adopted_Capital_Improvement_Budgets %>%
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank()) +
   scale_fill_manual(labels = c("Community Facil.", "Internal Serv.", "Resident / Econ Develop.", "Streets / Utilities"), values = c("#FDB462", "#BEBADA","#80B1D3", "#FB8072")) +
-  labs(title = "Proportion of Total Costs of Projects by Service Type and per Department",
-       subtitle = "",
+  labs(title = "Proportion of Total Costs of Department CIB Projects by Service Type",
+       subtitle = "2004 - 2021",
        x = "",
        y = "",
        fill = "")
@@ -256,43 +335,16 @@ g_amount / g_cost
 
 Similarly to the previous visualizations comparing Costs of Projects and Amount of Projects, we can see that a department having large amount of projects in certain service types does not mean that those departments spent a correspondingly large amount of costs on those projects. Specifically, we observe that the Community Facility service type makes up a large proportion of the total number of projects for the Safety and Inspections, Office of Technology, General Government, and Financial Services departments, but this service type makes up a small proportion of the total costs of projects in these same departments. 
 
-Another important trend I would like to note is the departments whose Capital Improvement Projects exclusively provide Community Facility services. These include the Public Art, Police, Parks and Recreation, Library, Fire, and Fire and Safety Services departments. While many other departments also implement Community Facility services to the residents of Saint Paul, these exclusive departments in that they implement no other service type. 
-
-### Community Facilities Capital Improvement Projects
-
-To examine this phenomenon further, below is a visualization showing the the 6 Community Facility exclusive departments (Public Art, Fire and Safety Services, Library, Fire, Police, and Parks and Recreation) and the proportion of the 
-
-```{r}
-Adopted_Capital_Improvement_Budgets %>% 
-  filter(DEPARTMENT == c("Parks and Recreation", "Police", "Fire", "Library", "Fire & Safety Services", "Public Art")) %>% 
-  mutate(department_reorder = fct_reorder(DEPARTMENT, Amount, sum)) %>%
-  ggplot(aes(x = YEAR, y = Amount, fill = department_reorder)) +
-  geom_bar(position = "fill", stat = "identity") +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_brewer(palette = "Set3") +
-  labs(title = "Proportion of Yearly Community Facilities Project Costs by Exclusive Departments",
-       x = "",
-       y = "",
-       fill = "") +
-  theme(plot.title.position = "plot",
-        plot.background = element_rect("linen"), 
-        panel.background = element_rect("linen"),
-        legend.background = element_rect("linen"),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
-```
-
+Another important trend I would like to note is the departments whose Capital Improvement Projects exclusively provide Community Facility services. These include the Public Art, Police, Parks and Recreation, Library, Fire, and Fire and Safety Services departments. While many other departments also implement Community Facility services to the residents of Saint Paul, these exclusive departments in that they only implement projects of the COmmunity Facilities service type. No other departments in exclusive in the type of services their projects provide, regardless of the service type.
 
 # Conclusion
 
 Through the use of different visualization techniques, we have come to new understandings about the City of Saint Paul's Capital Improvement Budget and the types of projects included in this budget. Specifically, we've learned that:
 
->There are no major patterns in the cost of CIB overtime
+>The CIB has varied significantly overtime in its total amount and average cost per project by year, but has had more consistent trends in the amounts of projects per year and the median cost per project by year. 
 
-> The service categories with the most projects are Community Facilties and Streets and Utilities, but Streets and Utilities projects are have the highest total cost across all years of the Data
+> The service categories with the most projects are Community Facilties and Streets and Utilities, but Streets and Utilities projects have the highest total cost across all years of the Data.
 
->The Public Works department accounts for the largest amounts and highest costs of projects
+>The Public Works department accounts for the largest amounts and highest costs of projects.
 
-> 
+> Projects that provide Community Facilities services make up large proportions of some departments total amount of projects, but make up significnalty smaller proportions of those department's total costs.
