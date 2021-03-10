@@ -21,9 +21,6 @@ library(readr)
 library(tidyverse)
 library(patchwork)
 library(lubridate)
-library(gganimate)
-library(transformr)
-library(gifski)
 library(RColorBrewer)
 ```
 
@@ -42,7 +39,7 @@ g_yearly <- Adopted_Capital_Improvement_Budgets %>%
   ggplot(aes(x = YEAR, y = year_amount)) +
   geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
-  labs(title = "Yearly Total Adopted Capital Improvement Budgets",
+  labs(title = "Yearly Total Adopted CIB",
        subtitle = "2004 - 2021",
        y = "",
        x = "") +
@@ -62,8 +59,8 @@ g_med <- Adopted_Capital_Improvement_Budgets %>%
   ggplot(aes(x = YEAR, y = year_median)) +
   geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
-  labs(title = "Yearly Median Adopted Capital Improvement Budgets",
-       subtitle = "2004 - 2021",
+  labs(title = "Median Adopted CIB Project Cost",
+       subtitle = "Per Year: 2004 - 2021",
        y = "",
        x = "") +
   theme(plot.title.position = "plot",
@@ -82,8 +79,8 @@ g_mean <- Adopted_Capital_Improvement_Budgets %>%
   ggplot(aes(x = YEAR, y = year_mean)) +
   geom_col(fill = "#FDB462") +
   scale_y_continuous(labels = scales::dollar) +
-  labs(title = "Yearly Mean Adopted Capital Improvement Budgets",
-       subtitle = "2004 - 2021",
+  labs(title = "Average Adopted CIB Project Cost",
+       subtitle = "Per Year 2004 - 2021",
        y = "",
        x = "") +
   theme(plot.title.position = "plot",
@@ -101,8 +98,8 @@ g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>%
   summarize(year_count = n()) %>% 
   ggplot(aes(x = YEAR, y = year_count)) +
   geom_col(fill = "#FDB462") +
-  labs(title = "Amount of Adopted Capital Improvement Projects per Year",
-       subtitle = "2004 - 2021",
+  labs(title = "Amount of Adopted CIB Projects",
+       subtitle = "Per Year: 2004 - 2021",
        y = "",
        x = "") +
   theme(plot.title.position = "plot",
@@ -115,8 +112,13 @@ g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>%
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
 
-(g_yearly / g_yearly_counts) | (g_mean / g_med)
+myplot1 <- ((g_yearly / g_yearly_counts) | (g_mean / g_med)) +
+  plot_annotation(title = "Change in the City of Saint Paul's Capital Improvement Budget (CIB) Over Time",
+                  caption = "Josh Fortin")
+
+ggsave("final_project_graph_jf.png", myplot1)
 ```
+
 
 ```{r}
 g_yearly_counts <- Adopted_Capital_Improvement_Budgets %>% 
